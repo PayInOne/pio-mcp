@@ -4,6 +4,10 @@
     "pio": {
       "type": "streamable-http",
       "url": "https://app.pioinc.com/gateway/foundation/mcp"
+    },
+    "pio-public": {
+      "type": "streamable-http",
+      "url": "https://app.pioinc.com/gateway/foundation/mcpPublic"
     }
   }
 }
