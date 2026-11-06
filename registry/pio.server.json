@@ -1,0 +1,23 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.PayInOne/pio",
+  "title": "PIO Team",
+  "description": "Read-only, permission-scoped PIO team workflows for payments, payroll and employee onboarding.",
+  "version": "1.0.0",
+  "websiteUrl": "https://github.com/PayInOne/pio-mcp",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/PayInOne/pio-mcp/e82a598ba5d82dcf1038d384f98d4662092c8b74/assets/pio-logo.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "1024x1024"
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://app.pioinc.com/gateway/foundation/mcp"
+    }
+  ]
+}

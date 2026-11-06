@@ -1,0 +1,80 @@
+name: Publish PIO MCP Registry records
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: pio-mcp-registry-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'PayInOne/pio-mcp' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      MCP_REGISTRY_URL: https://registry.modelcontextprotocol.io
+      MCP_PUBLISHER_VERSION: v1.8.1
+      MCP_PUBLISHER_SHA256: a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc
+    steps:
+      - name: Check out PIO metadata
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
+      - name: Check both records before publishing
+        run: python3 scripts/check_mcp_registry.py preflight "$RUNNER_TEMP/pio-mcp-pending.json"
+
+      - name: Install signature verifier
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2, cosign 3.0.6
+
+      - name: Download and verify official publisher
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="mcp-publisher_linux_amd64.tar.gz"
+          base_url="https://github.com/modelcontextprotocol/registry/releases/download/${MCP_PUBLISHER_VERSION}"
+          curl --fail --location --silent --show-error --output "$RUNNER_TEMP/$archive" "$base_url/$archive"
+          curl --fail --location --silent --show-error --output "$RUNNER_TEMP/$archive.sigstore.json" "$base_url/$archive.sigstore.json"
+          printf '%s  %s\n' "$MCP_PUBLISHER_SHA256" "$RUNNER_TEMP/$archive" | sha256sum --check --strict
+          cosign verify-blob \
+            --bundle "$RUNNER_TEMP/$archive.sigstore.json" \
+            --certificate-identity "https://github.com/modelcontextprotocol/registry/.github/workflows/release.yml@refs/tags/${MCP_PUBLISHER_VERSION}" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            "$RUNNER_TEMP/$archive"
+          tar xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP" mcp-publisher
+
+      - name: Authenticate as the PIO repository using GitHub OIDC
+        run: '"$RUNNER_TEMP/mcp-publisher" login github-oidc --registry "$MCP_REGISTRY_URL"'
+
+      - name: Validate both records with the official publisher
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/mcp-publisher" validate registry/pio.server.json
+          "$RUNNER_TEMP/mcp-publisher" validate registry/pio-public.server.json
+
+      - name: Publish missing records
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t manifests < <(jq -r '.[]' "$RUNNER_TEMP/pio-mcp-pending.json")
+          for manifest in "${manifests[@]}"; do
+            "$RUNNER_TEMP/mcp-publisher" publish "$manifest"
+          done
+
+      - name: Verify exact published records and latest versions
+        run: python3 scripts/check_mcp_registry.py verify
+
+      - name: Clear the temporary registry credential
+        if: always()
+        shell: bash
+        run: |
+          if [[ -x "$RUNNER_TEMP/mcp-publisher" ]]; then
+            "$RUNNER_TEMP/mcp-publisher" logout
+          fi
