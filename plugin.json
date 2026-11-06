@@ -1,0 +1,10 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.1.0/plugin.schema.json",
+  "name": "pio-mcp",
+  "version": "0.1.0",
+  "description": "Read PIO product guidance and permitted team data through PIO's read-only MCP connector.",
+  "author": {
+    "name": "PIO"
+  },
+  "homepage": "https://pioinc.com"
+}
