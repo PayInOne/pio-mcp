@@ -1,8 +1,10 @@
-# PIO MCP for Rakazo
+# PIO MCP
 
 Explore PIO products and hypothetical employment costs, or connect your own PIO team to investigate payments, payroll changes and onboarding. Team tools are read-only: they cannot pay, approve payroll, edit employees, sign contracts or send messages. The public cost tool creates a calculation job, without creating a business record.
 
-This package supports direct GitHub installation. It does not claim Rakazo marketplace approval.
+This package supports direct GitHub installation. Marketplace review and publication are separate from installing this package.
+
+The two hosted servers are listed in the [official MCP Registry](https://registry.modelcontextprotocol.io/?q=io.github.PayInOne). Registry listing publishes server metadata; it does not imply approval by Claude, OpenAI or Rakazo. See [connecting from Claude](docs/claude.md) for the hosted connection workflow.
 
 ## Choose a connection
 
@@ -62,6 +64,10 @@ Each skill provides a reusable request and a bounded workflow. Installing it doe
 Review actual tool results and evidence before accepting an answer. A successful connection is not proof that a particular business question was resolved. Missing or ambiguous records require clarification, not a broader query. Actions such as payment, recalculation, confirmation or an invitation remain in PIO.
 
 For a connection test, use approved test data, minimum scopes and a disposable connection. Verify the selected journey against PIO's source records. Revoke the connection in PIO afterward, confirm calls are denied after at least 31 seconds, and remove its saved credential from Rakazo. Removing a saved client credential alone is not server-side revocation.
+
+## Privacy and support
+
+The connected AI client receives the data returned by tools you enable. Team access follows your PIO permissions and granted scopes. Public calculations should use hypothetical inputs only. See the [PIO privacy policy](https://pioinc.com/privacy-policy), and contact **hi@pioinc.com** for support.
 
 ## References
 
