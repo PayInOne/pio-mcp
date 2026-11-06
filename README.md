@@ -2,13 +2,13 @@
 
 Read PIO product guidance and team data permitted by your PIO personal access token. The connector is read-only: its tools cannot create or change records, make payments, or send messages. Available tools depend on the token's data scopes and your team's permissions.
 
-This is a local Rakazo plugin candidate prepared on November 6, 2026. **Fresh installation, protected-token setup, and a real tool call in Rakazo are pending.** This package has not been submitted or approved for the marketplace. Earlier tests in another client do not establish Rakazo compatibility.
+Install this plugin from the public GitHub repository using the steps below, then connect your own PIO token through Rakazo's protected settings. This plugin has not been approved for the Rakazo marketplace.
 
 ## Install and authenticate
 
 The plugin contains a hosted Streamable HTTP connection. Its endpoint is `https://app.pioinc.com/gateway/foundation/mcp`.
 
-1. Publish these public files in an approved public GitHub repository or folder. In Rakazo, open **Integrations → + → From GitHub**, enter that source URL, and choose **Preview**. Check that the PIO MCP server appears without skipped components, then choose **Connect**.
+1. In Rakazo, open **Integrations → + → From GitHub**, enter **https://github.com/PayInOne/pio-mcp**, and choose **Preview**. Check that the PIO MCP server appears without skipped components, then choose **Connect**.
 2. In PIO, select the team you intend to connect. Open **User settings → AI assistant connections (MCP)** and create a personal access token with only the required data scopes and expiry.
 3. In Rakazo, open **Integrations → + → Manage MCP servers**, edit the installed PIO server, and expand **Advanced**. Put the token value in the protected **Access token (optional)** field. This is a bearer-token credential; enter the token itself, without an additional `Bearer ` prefix.
 4. Select the intended bot and choose **Use in this bot** for the server. Confirm the available tools before using them.
@@ -27,15 +27,9 @@ Ask the bot to call `get_product_facts` with:
 }
 ```
 
-Verify that the answer contains PIO's published product guidance and matches the instructions in PIO. Confirm the tool returns a successful result with `available: true`, `matched: true`, and at least one fact. Do not use this first test to read employees, salaries, payments, cards, or other business records. The MCP handshake and tool result can include the connected Demo company/team metadata, so use only an approved test scope.
+Verify that the answer contains PIO's published product guidance and matches the instructions in PIO. Confirm the tool returns a successful result with `available: true`, `matched: true`, and at least one fact. Do not use this first test to read employees, salaries, payments, cards, or other business records. The MCP handshake and tool result can include the connected company/team metadata, so use only an approved test scope.
 
 Revoke the disposable token in PIO after the test. Wait at least 31 seconds and confirm the connection can no longer return data. Remove the test connection and its saved credential from Rakazo. Record the date, installed commit, client version, tool and result without credentials or personal data.
-
-## Publication status
-
-This package includes PIO's public logo at `assets/pio-logo.png`. Marketplace submission requires a published source URL, an HTTPS logo URL, publisher contact, testing instructions and fresh successful Rakazo acceptance. Those submission details must be supplied and verified separately; no publisher contact, repository URL or license has been invented here. Do not check the marketplace's tested-and-working confirmation until the Rakazo test has passed.
-
-The root manifests follow the documented Agent Plugins 1.1.0 format. Static file checks do not establish successful installation, authentication, tool execution or marketplace approval.
 
 ## References
 
